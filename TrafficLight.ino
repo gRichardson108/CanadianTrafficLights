@@ -79,7 +79,7 @@ void loop()
     readData = false;
   }*/
   
-  handleClient();
+  handleClient();//make the web server check for clients and potentially update timings
   
   currentTime = millis();
   switch (light)
@@ -260,11 +260,35 @@ void handleClient(){
              //stopping client
              client.stop();
              //controls the Arduino if you press the buttons
-             if (readString.indexOf("?button1on") >0){
-                 digitalWrite(ledNorth, HIGH);
-             }
-             if (readString.indexOf("?button1off") >0){
-                 digitalWrite(ledNorth, LOW);
+             if (readString.indexOf("submitFields") >0){
+               int redIndex = readString.indexOf("red=");
+               int yellowIndex = readString.indexOf("&yellow=");
+               int greenIndex = readString.indexOf("&green=");
+               int flashingIndex = readString.indexOf("&flashing=");
+               /*Serial.print("Indexof redDuration: ");
+               Serial.print(redIndex);
+               Serial.print(" -- Value: ");
+               Serial.println(readString.substring(redIndex + 4,yellowIndex));//on each of these, i'm adding the length of the indexing string so we start at the = sign on the left
+               
+               Serial.print("Indexof yellowDuration: ");
+               Serial.print(yellowIndex);
+               Serial.print(" -- Value: ");
+               Serial.println(readString.substring(yellowIndex + 8,greenIndex));
+               
+               Serial.print("Indexof greenDuration: ");
+               Serial.print(greenIndex);
+               Serial.print(" -- Value: ");
+               Serial.println(readString.substring(greenIndex + 7,flashingIndex));
+               
+               Serial.print("Indexof flashingDuration: ");
+               Serial.print(flashingIndex);
+               Serial.print(" -- Value: ");
+               Serial.println(readString.substring(flashingIndex + 10,readString.indexOf(" HTTP/")));*/
+               redDuration = readString.substring(redIndex + 4,yellowIndex).toInt();
+               yellowDuration = readString.substring(yellowIndex + 8,greenIndex).toInt();
+               greenDuration = readString.substring(greenIndex + 7,flashingIndex).toInt();
+               flashingDuration = readString.substring(flashingIndex + 10,readString.indexOf(" HTTP/")).toInt();
+               
              }
              //clearing string for next read
              readString="";  
